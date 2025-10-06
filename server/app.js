@@ -5,10 +5,15 @@ const { connectDB } = require('./db/connection');
 dotenv.config();
 const UserRouter=require('./routes/user.route')
 const CookieParser = require('cookie-parser');
+const cors=require('cors')
+
+
+
 // Middleware to parse JSON request bodies
 app.use(express.json());
 // Middleware to parse cookies
 app.use(CookieParser());
+app.use(cors())
 
 
 
