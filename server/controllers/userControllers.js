@@ -2,7 +2,7 @@ const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
-
+const redisClient = require('../services/redis.service')
 dotenv.config();
 
 
@@ -39,7 +39,7 @@ exports.loginUser = async (req, res) => {
             return res.status(400).json({ msg: "Invalid password" });
         }
 
-       const token=jwt.sign({id:user.id}, process.env.JWT_SECRET, { expiresIn: "10h"  });
+       const token=jwt.sign({id:user.id}, process.env.JWT_SECRET, { expiresIn: "24h"  });
        res.cookie("token", token, { httpOnly: true });
 
 
@@ -56,7 +56,9 @@ exports.loginUser = async (req, res) => {
 exports.logoutUser = async (req, res) => { 
     try {
         res.clearCookie("token");
-        res.json({ message: "Logged out successfully" });
+        const token=req.Cookies.token || req.headers.authorization.split(' ')[1];
+        redisClient.set(token,'logout', 'EX',60*60*24);
+        res.status(200).json({ message: "Logged out successfully" });
     } catch (error) {
         console.error(error.message);
         res.status(500).send("Server Error");
