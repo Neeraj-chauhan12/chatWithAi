@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import axiosInstance from '../config/axios'
 import { toast } from 'react-hot-toast'
 import { FiEye, FiEyeOff } from 'react-icons/fi'
+import { useAuth } from '../context/AuthProvider'
 
 const Login = () => {
   const [email, setEmail] = useState('')
@@ -11,13 +12,19 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
 
+  const [authuser,setAuthUser]=useAuth();
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
     try {
       const res = await axiosInstance.post('/api/users/login', { email, password })
       toast.success(res?.data?.message || 'Logged in successfully')
-      if (res?.data?.token) localStorage.setItem('token', res.data.token)
+      console.log(res?.data)
+      if (res?.data) 
+      localStorage.setItem('app',JSON.stringify(res?.data))
+      setAuthUser(JSON.stringify(res?.data))
+
+
         
       // navigate to home
       navigate('/')
