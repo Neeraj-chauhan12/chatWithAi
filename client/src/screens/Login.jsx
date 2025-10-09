@@ -22,6 +22,7 @@ const Login = () => {
       console.log(res?.data)
       if (res?.data) 
       localStorage.setItem('app',JSON.stringify(res?.data))
+      localStorage.setItem('token',res?.data?.token)
       setAuthUser(JSON.stringify(res?.data))
 
 

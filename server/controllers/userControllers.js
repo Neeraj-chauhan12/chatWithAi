@@ -40,8 +40,14 @@ exports.loginUser = async (req, res) => {
             return res.status(400).json({ msg: "Invalid password" });
         }
 
-       const token=jwt.sign({id:user.id}, process.env.JWT_SECRET, { expiresIn: "24h"  });
-       res.cookie("token", token, { httpOnly: true });
+             const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '24h' })
+             // set cookie with conservative options; secure should be true in production (https)
+             res.cookie('token', token, {
+                 httpOnly: true,
+                 sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+                 secure: process.env.NODE_ENV === 'production',
+                 maxAge: 24 * 60 * 60 * 1000,
+             })
 
 
         res.json({ message: "Logged in successfully", user, token });
