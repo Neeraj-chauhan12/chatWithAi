@@ -10,3 +10,9 @@ exports.create=async(req,res)=>{
     return res.status(201).json({newproject})
 
 }
+
+exports.findAll=async(req,res)=>{
+
+    const alldata=await Project.find({});
+    return res.status(201).json({message:"data",alldata})
+}
